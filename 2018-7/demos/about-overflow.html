@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>关于overflow:hidden和transform一起使用遇到的问题</title>
+    <style lang="scss">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 10px;
+            background: #ffffff;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+        }
+
+        .img {
+            width: 90px;
+            height: 90px;
+        }
+
+        .info {
+            width: 100%;
+            padding-left: 10px;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-between;
+        }
+
+        .title {
+            font-size: 14px;
+            height: 14px;
+            line-height: 14px;
+        }
+
+        .tags {
+            box-sizing: border-box;
+            display: flex;
+            flex-flow: row wrap;
+            height: 15px;
+            overflow: hidden;
+            margin-top: 8px;
+            border-radius: 1px;
+            transform: translateZ(0);
+        }
+
+        .tag {
+            padding: 2px 4px 3px 4px;
+            font-size: 10px;
+            color: #ff6633;
+            height: 10px;
+            line-height: 11px;
+            background: rgba(0, 169, 153, 0.05)
+        }
+
+        .tag::before {
+            content: '';
+            position: absolute;
+            padding-top: 4px;
+            margin-left: -4px;
+            width: 1px;
+            height: 7px;
+            line-height: 7px;
+            background-color: #b2e6e1;
+            transform: scaleX(0.5);
+        }
+
+        .tag:first-child::before {
+            width: 0;
+        }
+
+        .right {
+            width: 48px;
+            margin: auto;
+            background: #ff6633;
+            text-align: center;
+            height: 26px;
+            line-height: 26px;
+            border-radius: 4px;
+            color: #ffffff;
+        }
+
+        .price {
+            margin-top: 8px;
+            font-size: 18px;
+            -webkit-text-stroke-width: 0.6px;
+            color: #ff6230;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img class="img" src="http://p1.meituan.net/codeman/4149a047af0d20d87c8242669844c9fb280515.jpg" alt="">
+        <div class="info">
+            <div class="left">
+                <div class="title">香港迪士尼乐园</div>
+                <div class="tags">
+                    <div class="tag">官方</div>
+                    <div class="tag">极速出票</div>
+                    <div class="tag">可订明日</div>
+                    <div class="tag">换票入园</div>
+                </div>
+                <div class="price">¥110</div>
+            </div>
+            <div class="right">购买</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
