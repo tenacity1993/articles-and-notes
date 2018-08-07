@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>a标签点击事件失效</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .father {
+            display: block;
+            width: 500px;
+            height: 200px;
+            background-color: rgb(210, 111, 30);
+        }
+
+        .child-one {
+            display: block;
+            width: 200px;
+            height: 50px;
+            background-color: rgb(174, 43, 226);
+        }
+
+        .child-two {
+            display: block;
+            width: 200px;
+            height: 50px;
+            background-color: rgb(43, 226, 67);
+        }
+    </style>
+</head>
+<body>
+    <a class="father" href="http://www.baidu.com">父标签
+        <span href="child-one" class="child-one">
+            子标签
+        </span>
+        <span href="child-two" class="child-two">
+            子标签
+        </span>
+    </a>
+</body>
+</html>
