@@ -2,7 +2,7 @@
 
 开发过程中遇到问题，简单写个[demo](https://github.com/tenacity1993/articles-and-notes/blob/master/2018-8/demos/about-a-click-invalid.html)   运行环境为Chrome 68
 
-描述一下这个问题，当a标签内部存在嵌套时， 父元素a标签的href默认行为以及子元素绑定的click事件的响应之间存在影响。页面结构：
+描述一下这个问题，当`<a>`标签内部存在嵌套时， 父元素`<a>`标签的`href`默认行为以及子元素绑定的click事件的响应之间存在影响。页面结构：
 
 ```html
 <!DOCTYPE html>
