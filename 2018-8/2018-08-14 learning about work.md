@@ -148,6 +148,8 @@ step:
 
 #### 核心概念 & 使用
 
+[参考文档](https://cn.mobx.js.org/) 
+
 参考学习了 [egghead.io课程](https://egghead.io/courses/manage-complex-state-in-react-apps-with-mobx)
 
 入门demo：
@@ -257,6 +259,116 @@ actions执行状态的改变。
 >
 > 所有的**计算值**都应该是**纯净**的。它们不应该用来改变**状态**。
 
- 
+#### 其他注意
 
-#### 
+##### observable 相关
+
+1.   通过 `observable` 传递对象时，后添加到对象的属性无法自动变成可观察的状态
+
+   这点有点类似于Vue中的对象数据绑定，如果在最开始定义的时候没有定义某个属性，后面再添加时将无法监控到这个属性的变化，可以使用`vue.set`来使得操作生效。
+
+> 当使对象转变成 observable 时，需要记住一些事情:
+>
+> - 当通过 `observable` 传递对象时，只有在把对象转变 observable 时存在的属性才会是可观察的。 稍后添加到对象的属性不会变为可观察的，除非使用 [`set`](https://cn.mobx.js.org/refguide/object-api.html) 或 [`extendObservable`](https://cn.mobx.js.org/refguide/extend-observable.html)。
+
+2. `Array.isArray(observable([]))`返回值为`false`
+
+>  `observable.array` 会创建一个人造数组(类数组对象)来代替真正的数组。 实际上，这些数组能像原生数组一样很好的工作，并且支持所有的原生方法，包括从索引的分配到包含数组长度。
+>
+> 请记住无论如何 `Array.isArray(observable([]))` 都将返回 `false` ，所以无论何时当你需要传递 observable 数组到外部库时，通过使用 `array.slice()` **在 observable 数组传递给外部库或者内置方法前创建一份浅拷贝**(无论如何这都是最佳实践)总会是一个好主意。 换句话说，`Array.isArray(observable([]).slice())` 会返回 `true`。
+
+3. Array的sort&reverse方法会修改原数组，observableArray则不会
+
+> 不同于 `sort` 和 `reverse` 函数的内置实现，observableArray.sort 和 observableArray.reverse 不会改变数组本身，而只是返回一个排序过/反转过的拷贝。
+
+##### computed
+
+1. computed&autorun并不一样。
+
+   二者都是响应式调用的衍生，但是computed可以理解为一个纯函数（即调用时刻的输出只由该时刻的输入决定，而不依赖于系统状态），如果使用过程中依赖没有被修改，则不会重新计算。autorun的使用场景更像是产生效果，例如对数据进行过滤操作（而不是产生数据），或者数据监控到数据变化之后的通知等副作用操作（这点与vue中的method并不一样，不要混淆）。
+
+   > 如果你想响应式的产生一个可以被其它 observer 使用的**值**，请使用 `@computed`，如果你不想产生一个新值，而想要达到一个**效果**，请使用 `autorun`。 举例来说，效果是像打印日志、发起网络请求等这样命令式的副作用。
+
+2. 可以通过将computed作为一个函数，来获取在box中的计算值（即基本数据类型值）
+
+3. 错误处理
+
+   > 如果计算值在其计算期间抛出异常，则此异常将捕获并在读取其值时重新抛出。 强烈建议始终抛出“错误”，以便保留原始堆栈跟踪。抛出异常不会中断跟踪，所有计算值可以从异常中恢复。
+
+   ```jsx
+   const x = observable(3)
+   const y = observable(1)
+   const divided = computed(() => {
+       if (y.get() === 0)
+           throw new Error("Division by zero")
+       return x.get() / y.get()
+   })
+   
+   divided.get() // 返回 3
+   
+   y.set(0) // OK
+   divided.get() // 报错: Division by zero
+   divided.get() // 报错: Division by zero
+   
+   y.set(2)
+   divided.get() // 已恢复; 返回 1.5
+   ```
+
+##### autorun
+
+1. autorun函数具有响应式功能，但是该函数不具有观察者。
+2. autorun函数会立即触发，然后每次依赖关系发生改变时会再次触发。computed创建的函数，只有当它有自己的观察者时才会重新计算。
+
+##### observer
+
+1. 简单来说: *所有渲染 observable 数据的组件*都需要使用@observer
+
+2. 在 reaction 中使用的特定 props 一定要间接引用(例如 `const myProp = props.myProp`)。不然，如果你在 reaction 中引用了 `props.myProp`，那么 props 的**任何**改变都会导致 reaction 的重新运行。
+
+3. MobX 追踪属性访问，而不是值，可以理解为追踪的是引用，当引用的内存空间发生变化时触发响应行为，如果只是内存空间中的值发生变化，是不会被追踪的。
+
+4. 陷阱
+
+   ```jsx
+   const message = observable({ title: "hello" })
+   autorun(() => {
+       // 错误
+       console.log(message)
+       // 正确
+       console.log(message.title)
+   })
+   
+   // 不会触发重新运行
+   message.title = "Hello world"
+   ```
+
+   其他解决方案：
+
+   ```jsx
+   autorun(() => {
+       console.log(message.title) // 很显然， 使用了 `.title` observable
+   })
+   autorun(() => {
+       console.log(mobx.toJS(message)) // toJS 创建了深克隆，从而读取消息
+   })
+   autorun(() => {
+       console.log({...message}) // 创建了浅克隆，在此过程中也使用了 `.title`
+   })
+   autorun(() => {
+       console.log(JSON.stringify(message)) // 读取整个结构
+   })
+   ```
+
+##### action
+
+1. 对于修改状态的函数使用@action
+2. `runInAction` 是个简单的工具函数，它接收代码块并在(异步的)动作中执行。
+3. 仔细了解了异步[Action这一部分](https://cn.mobx.js.org/best/actions.html)，注意书写方式。
+
+   
+
+   
+
+   
+
+​    
