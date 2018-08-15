@@ -1,0 +1,262 @@
+# 2018-08-14 learning about work
+
+begin：2018-08-13
+
+step 1 熟悉react 写法
+
+step 2 mobx 了解&使用
+
+step 3 thrift接口调用过程
+
+
+
+## React&JavaScript
+
+#### propsType
+
+[propsType官方文档](https://www.npmjs.com/package/prop-types)
+
+react可以在引入`prop-types`，配置propsTypes属性之后进行类型检查。
+
+可以将属性声明为JS原生类型、React元素、某个类的实例，指定类型的对象等，也可以自定义，可以加上isRequired后缀，如果没有提供该信息，会打印警告。
+
+还可以通过配置`defaultProps`，为props定义默认值。
+
+#### props.children
+
+[react children](https://github.com/ybning/blog/issues/19)
+
+```jsx
+class Grid extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {}
+  }
+  render() {
+    return (
+      // 可以在这里控制子元素是否显示
+       <div>{this.props.children}</div>
+      // 只显示hello文本，并不显示子元素
+      // <div>hello</div>
+    )
+  }
+}
+const Row = ({ name }) => {
+  return (
+    <div>{name}</div>
+  )
+}
+
+ReactDom.render(
+  <Grid>
+    <Row name={1} />
+    <Row name={2} />
+    <Row name={3} />
+  </Grid>,
+  document.getElementById('root')
+)
+```
+
+#### es6 static methods
+
+
+
+## React & MobX
+
+#### 介绍&功能
+
+mobx是一个状态管理器，下图是官网的原理图，看上去感觉跟Vue的双向数据绑定很相似。
+
+![mobx](https://ws4.sinaimg.cn/large/0069RVTdly1fu8bh5aepsj31330df0uv.jpg)
+
+通过action来修改组件状态，由于数据与视图双向绑定，一旦数据改变，会触发视图的更新，从而引起组件或者页面的重新渲染。
+
+mobx的computed与vue的计算属性也有类似，都设置了缓存，依赖项没有发生变化的时候，该属性不会重新运行计算，只有在真正需要更新的时候才会更新。设置了computed的方法与普通方法的区别，也类似于vue的computed与method的区别。
+
+感觉简单而言，从视图更新的过程来看，可以抽象成三个部分：action、state、views，mobx单项数据流，可以有下图的描述：
+
+![简单描述](https://ws2.sinaimg.cn/large/006tNbRwgy1fu8bu8jtjzj30gc020t8o.jpg)
+
+我觉得，State如果类比于MVVM的话，可以理解为ViewModel。
+
+从开发者的角度来看：
+
+![开发者角度](https://ws2.sinaimg.cn/large/006tNbRwgy1fu8byg2aetj30gc01udft.jpg)
+
+#### 本地搭建环境
+
+本地需要搭建一个react-app环境并添加mobx等相关依赖。
+
+step:
+
+1. `create-react-app  my-react-app ` 使用命令行工具创建新的react-app，并进入项目目录
+
+   （本地需先使用`npm install -g create-react-app` 命令安装工具）
+
+2.  安装babel等
+
+   `npm install --save-dev babel-core babel-cli babel-preset-env babel-preset-react`
+
+3. 创建&编写`.babelrc`文件
+
+   （这里的`plugins`如果不写也可以，关于支持ES7装饰器的配置问题，后面会再讲）
+
+   ```json
+   {
+       "presets": [
+           "env",
+           "react",
+           "stage-1",
+           "es2015"
+       ],
+       "plugins": [
+           "transform-decorators-legacy",
+           "transform-decorators"
+       ]
+   }
+   ```
+
+4. 安装其他依赖，包括`style-loader`、`babel-loader`、`css-loader`等等。
+
+   这里我开始手动安装了`webpack`，然后安装`webpack`的时候，没有指定版本号，默认会安装最新版本Webpack4，运行时会报下面错误：
+
+   `Cannot read property 'thisCompilation' of undefined during npm run build`
+
+   参考这里的[解决方式](https://github.com/facebook/create-react-app/issues/4076#issuecomment-374945938)
+
+   > To solve this problem:
+   >
+   > - Delete `node_modules`
+   > - Delete `package-lock.json` if present
+   > - If you have `react-scripts` in `package.json`, make sure you *don't* have `webpack` in it
+   > - Run `yarn` (or `npm install`)
+   > - Also make sure you don't have `package.json` or `node_modules` in the parent folders of your project
+
+   另一种方式是webpack降级到3。可以理解成webpack4与react-scripts不能同时在package.json中存在。
+
+   查找资料的时候发现，如果使用`Create React App`的话，其实是不需要手动再去安装Webpack的。
+
+   最后我删除了`node_modules`，然后`package.json`中删除了`webpack`，重新`npm install`或者`yarn`一下，问题解决了。
+
+5. 配置装饰器语法支持。
+
+   安装`babel-plugin-transform-decorators`、 ` babel-plugin-transform-decorators-legacy`等相关依赖。
+
+   实际情况是，依赖装完，`.babelrc`文件中也配置了插件，webpack也配置完成之后，仍然无法识别装饰器语法，最后按照[参考](https://segmentfault.com/q/1010000010491983)中的方法2解决了。但是这种方法需要在`node_modules`中修改，个人觉得不大好，暂时先这样处理下，后续再查看下。
+
+6. 通过`npm run start`启动项目，进行后续操作。
+
+#### 核心概念 & 使用
+
+参考学习了 [egghead.io课程](https://egghead.io/courses/manage-complex-state-in-react-apps-with-mobx)
+
+入门demo：
+
+```jsx
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+import { Component } from 'react';
+import React from "react";
+import ReactDOM from "react-dom";
+
+const appState = observable({
+  count: 0
+})
+// 这里不能写成剪头函数 否则数据绑定会失效
+appState.increment = function () {
+  this.count++;
+}
+appState.decrement = function () {
+  this.count--;
+}
+
+@observer class Counter extends Component {
+  render() {
+    return (
+      <div>
+        Counter {this.props.store.count} <br />
+        <button onClick={this.handleInc}> + </button>
+        <button onClick={this.handleDec}> - </button>
+      </div>
+    )
+  }
+
+  handleInc = () => {
+    this.props.store.increment()
+  }
+
+  handleDec = () => {
+    this.props.store.decrement()
+  }
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<Counter store={appState} />, rootElement);
+```
+
+##### Observable state(可观察的状态)
+
+mobx使用ES7装饰器语法（可选使用）通过给现有属性增加`@observable `注解，就可以将属性设定为可观察的属性。使用装饰器属性可以使得书写代码更加简洁.
+
+也可以写成这样
+
+```jsx
+ class appState {
+   @observable count = 0;
+   increment = function () {
+     this.count++;
+   }
+   decrement = function () {
+     this.count--;
+   }
+ }
+ ......
+ ReactDOM.render(<Counter store={new appState()} />, rootElement);
+
+```
+
+不过有个疑惑，下图方法1使用const定义是出于什么目的，官方文档的demo中也有很多是使用const定义的。
+
+如果像下图方法二这样书写，是否有意义？count值也会改变，appState定义为const，其中内容是可以被改变的，如何控制不被改变？实际中是否会有这种情况？
+
+```jsx
+//1. 这里写成const是什么意义？
+const appState = observable({
+  count: 0
+}) 
+
+//2. 这样写是否有意义？const？
+ const appState =  {
+   @observable count: 0
+ }
+```
+
+#####  Computed values
+
+使用@computed 修饰getter方法，计算值延迟更新，只有依赖改变，需要重新计算的时候才会更新。
+
+#####  Reactions(反应)
+
+1. 可以通过@observer将无状态组件变成响应式组件， MobX 会确保组件总是在需要的时重新渲染。
+
+   只要需要在状态发生改变时需要更新视图的view上使用@observer修饰，就可以实现自动更新。
+
+2.  自定义 reactions
+
+##### Actions
+
+actions执行状态的改变。
+
+[文档](https://cn.mobx.js.org/intro/concepts.html)中有这么一段，个人觉得所有衍生同步更新，计算值延迟更新，这两句似乎有些矛盾，这里的所有衍生是否指的是reactions或者action后出发的事件？意思是说不能用计算值来改变状态，而是状态改变之后计算值一定已经变化？有点拗口。。。这里的同步更新和延迟更新到底指的是什么，感觉只能后面有时间看下源码才能了解了
+
+>  当**状态**改变时，所有**衍生**（**任何** 源自**状态**并且不会再有任何进一步的相互作用的东西就是衍生 ）都会进行**原子级的自动**更新。因此永远不可能观察到中间值。
+>
+> 所有**衍生**默认都是**同步**更新。这意味着例如**动作**可以在改变**状态**之后直接可以安全地检查计算值。
+>
+> **计算值** 是**延迟**更新的。任何不在使用状态的计算值将不会更新，直到需要它进行副作用（I / O）操作时。 如果视图不再使用，那么它会自动被垃圾回收。
+>
+> 所有的**计算值**都应该是**纯净**的。它们不应该用来改变**状态**。
+
+ 
+
+#### 
