@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  /* padding-left: 20px; */
+  /* padding-top: 20px; */
+}
+.list-view {
+  margin: 20px;
+}
+
+li {
+  list-style: none
+}
+
+.todo-input-box {
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 40%;
+  border: solid 1px #ff6630
+}
+
+.archieve {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  border: 1px solid #ff6630;
+}
+
+.archieve .archieve-item {
+  font-size: 14px;
+}
+
+button {
+  width: 40px;
+  height: 20px;
+  margin-left: 5px;
+  background-color: #6699cc;
+}
+
