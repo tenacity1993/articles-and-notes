@@ -2,6 +2,8 @@
 
 [官网](https://www.tslang.cn/)
 
+[手册](http://www.typescriptlang.org/docs/handbook/interfaces.html)
+
 #### 介绍
 
 TypeScript是JavaScript类型的超集，它可以编译成JavaScript。
