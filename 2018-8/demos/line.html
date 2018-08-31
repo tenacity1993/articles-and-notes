@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>北京-廊坊</title>
+    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css"/>
+    <script src="https://webapi.amap.com/maps?v=1.4.9&key=8e0b0305594741f272817e33c4c339fe"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <style>
+        .marker {
+            color: #ff6600;
+            padding: 4px 10px;
+            border: 1px solid #fff;
+            white-space: nowrap;
+            font-size: 12px;
+            font-family: "";
+            background-color: #0066ff;
+        }
+        #reload {
+            position: absolute;
+            top: 10px;
+            left: 30%;
+            color: #ffffff;
+            background-color: #0066ff;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<div id="tip"></div>
+<button id="reload">重新定位</button>
+<script>
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        center: [116.25053, 39.90739],
+        zoom: 13
+    });
+    var lineArr = [
+        [116.25053, 39.90739],
+        [116.25286, 39.90743],
+        [116.25658, 39.90743],
+        [116.26464, 39.90741],
+        [116.26464, 39.90741],
+        [116.26459, 39.90612],
+        [116.26461, 39.8969],
+        [116.26463, 39.89456],
+        [116.26484, 39.88948],
+        [116.27364, 39.88939],
+        [116.27467, 39.88362],
+        [116.27707, 39.8791],
+        //
+        [116.27916, 39.87436],
+        [116.28511, 39.86582],
+        [116.31104, 39.8662],
+        [116.32461, 39.85027],
+        [116.34562, 39.84651],
+        [116.34463, 39.83216],
+        [116.34361, 39.83123],
+        [116.34452, 39.83041],
+        [116.34526, 39.82274],
+        //
+        [116.3498, 39.82143],
+        [116.3524, 39.82067],
+        [116.35742, 39.81877],
+        [116.36821, 39.81181],
+        [116.38685, 39.80351],
+        [116.39501, 39.80289],
+        // 警备西路-警备东路 20公里接力点
+        [116.39532, 39.8029],
+        [116.39787, 39.79632],
+        [116.39873, 39.79282],
+        [116.40793, 39.79322],
+        [116.4197, 39.79329],
+        //
+        [116.42077, 39.78745], // 添加点24
+        [116.42211, 39.78612],
+        [116.42813, 39.78243],
+        [116.44692, 39.7687],
+        [116.46318, 39.72691],
+        [116.50528, 39.67898],
+        [116.51, 39.67774],
+        [116.51449, 39.6768],
+        [116.51694, 39.6753],
+        [116.51775, 39.67513],
+        [116.51919, 39.6701],
+        [116.5229, 39.65735],
+        [116.52406, 39.65738],
+        [116.52449, 39.65407],
+        [116.52466, 39.65163],
+        [116.52693, 39.65182],
+        [116.52779, 39.64837],
+        //  20km 接力点
+        [116.52882, 39.64047],
+        [116.53097, 39.64058],
+        [116.53236, 39.63706],
+        [116.53266, 39.63704],
+        [116.53291, 39.63643],
+        [116.53372, 39.60915],
+        //
+        [116.53675, 39.6092],
+        [116.54214, 39.60925],
+        [116.56155, 39.61205],
+        [116.56646, 39.60699],
+        [116.56692, 39.60542],
+        [116.56591, 39.60498],
+        [116.56644, 39.60438],
+        [116.56705, 39.60456],
+        [116.5689, 39.60172],
+        [116.57088, 39.60169],
+        [116.5734, 39.60167],
+        [116.57884, 39.58836],
+        [116.57989, 39.58855],
+        [116.58064, 39.58678],
+        [116.58245, 39.58688],
+        [116.58713, 39.57719],
+        [116.60914, 39.57143],
+        [116.61031, 39.56996],
+        [116.61179, 39.56989],
+        [116.613, 39.56577],
+        [116.62334, 39.56],
+        [116.66117, 39.53919],
+        [116.666, 39.53649],
+        [116.66893, 39.53672],
+        [116.67004, 39.53679],
+        [116.66868, 39.53521],
+        [116.66596, 39.53322],
+        [116.66517, 39.53339]
+    ];
+    var polyline = new AMap.Polyline({
+        path: lineArr,          //设置线覆盖物路径
+        strokeColor: "#3366FF", //线颜色
+        strokeOpacity: 1,       //线透明度
+        strokeWeight: 5,        //线宽
+        strokeStyle: "solid",   //线样式
+        strokeDasharray: [10, 5] //补充线样式
+    });
+    polyline.setMap(map);
+
+
+    var markPoints = [
+        {
+            title: '起点',
+            pos: [116.25053, 39.90739]
+        },
+        {
+            title: '警备西路-警备东路20km接力点',
+            pos: [116.39532, 39.8029]
+        },
+        {
+            title: '40km接力点',
+            pos: [116.52882, 39.64047]
+        }
+    ]
+    
+    var marker = new AMap.Marker({
+        position: [116.25286, 39.90743]
+    });
+
+
+    var markList = []
+    markPoints.forEach(function(item, index) {
+        markList.push(
+            new AMap.Marker({
+            title: item.title,
+            position: item.pos
+        })
+        ) 
+    })
+
+    map.add(markList);
+
+
+    map.plugin('AMap.Geolocation', function() {
+        geolocation = new AMap.Geolocation({
+            enableHighAccuracy: true,//是否使用高精度定位，默认:true
+            timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            buttonPosition:'RB'
+        });
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition();
+        AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
+        AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
+    });
+
+    //解析定位结果
+    function onComplete(data) {
+        var str=['定位成功'];
+        str.push('经度：' + data.position.getLng());
+        str.push('纬度：' + data.position.getLat());
+        if(data.accuracy){
+             str.push('精度：' + data.accuracy + ' 米');
+        }//如为IP精确定位结果则没有精度信息
+        str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
+        document.getElementById('tip').innerHTML = str.join('<br>');
+    }
+    //解析定位错误信息
+    function onError(data) {
+        document.getElementById('tip').innerHTML = '定位失败';
+    }
+
+</script>
+</body>
+</html> 
