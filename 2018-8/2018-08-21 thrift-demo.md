@@ -6,6 +6,8 @@
 
 最近了解到了node中间层的相关概念，使用node来搭建中间层对于前端开发人员来说上手较为容易。通过对业务的合理分层，能够实现更高效的开发。结构示意图如下图，前端通过fetch或者发出ajax请求向中间层请求数据，中间层调用底层服务时可以使用RPC协议，然后得到Server端返回的数据，middleware自身加工后再返回给前端。
 
+从路由角度来说，client中的路由可以理解为前端路由（比如vue-router、react-router），middleware层可以理解为后端路由（Koa-router）。
+
 ![示意图](https://ws2.sinaimg.cn/large/006tNbRwgy1fuhfakh3t8j30su080q3g.jpg)
 
 # RPC
@@ -58,15 +60,29 @@ Thrift是Facebook 开源的跨语言框架，是目前主流的 RPC 框架之一
 
 #### FE-Middleware-BE demo
 
+通常开发中，FE和Middleware由前端来完成，这里给出了一个简单的FE-Middleware-BE的demo。
+
+IDL文件通常是由后端提供，安装完成thrift之后，cd到thrift文件的目录下，执行`thrift -r --gen js:node {文件名}.thrift`命令，即可生成需要使用的文件。
+
+client使用react，实现了一个简单列表的输入和展示。初始时发送get请求获取接口数据，这里在server端引入了json文件作为初始数据。随后输入信息点击确定之后，会post数据到中间层，进而到服务端，数据处理完成后，更新列表数据，进而视图更新。
+
+middleware使用nodejs+koa搭建，client为3000端口，middleware3001，server端3002，存在跨域，使用`koa2-cors`插件。
+
+[地址](http://git.sankuai.com/users/chentengda/repos/thrift-starter/browse)
+
+启动：
+
+```shell
+npm run server
+npm run middleware
+npm run client
+```
 
 
 
 
 
-
-
-
-
+![demo](https://ws1.sinaimg.cn/large/006tNbRwgy1fuywbe5t5cj30ky0nct9j.jpg)
 
 
 
