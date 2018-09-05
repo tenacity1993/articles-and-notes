@@ -26,10 +26,13 @@ client.ping(function (err, response) {
 let length = 0
 let timer = setInterval(function () {
     client.getNum(Math.random() * 10, 'hello', function (err, response) {
-        console.log('get num from server:  ', response.num, response.comment)
+        console.log('send num to server:  ', response.num, response.comment)
     })
     length++
     if(length >= 5) {
+        client.getList((err, response)=> {
+            console.log('response from server: \n', response)
+        })
         connection.end()
         clearInterval(timer)
     }

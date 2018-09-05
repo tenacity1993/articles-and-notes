@@ -2,7 +2,7 @@
 
 之前开发的时候接口形式都是https，前端只需要发送ajax请求，然后获取后端返回的字段进行前端页面的渲染。自己对于前后端开发的定义过于狭隘，从这个角度来说，其实这种情况下前端认为的后端可能也只是中间层，也有人叫Web API层，其实离真正的后端，真正的底层还是有一段距离。
 
-传统的前后端可以简单理解为前端只负责页面的渲染，后端负责数据的提供，通常情况下，后端尽管作为数据提供者，但还是涉及到很多视图相关的操作，比如说显示数据的排序或者其他二次处理等。如果后端只提供原始数据，将这些二次操作放在前端，那么势必性能较差，甚至无法实现。但是如果使用中间层来对底层数据进行包装处理，然后再返回给前端，这样就能很好解决这个问题。除此之外，如果前端需要的数据来自于不同的后端服务，或者存在鉴权等操作，那么也很需要中间层来将这些服务进行处理。
+传统的前后端可以简单理解为前端只负责页面的渲染，后端负责数据的提供，通常情况下，后端尽管作为数据提供者，但还是涉及到很多视图相关的操作，比如说显示数据的排序或者数据脱敏等其他二次处理等。如果后端只提供原始数据，将这些二次操作放在前端，那么势必性能较差，甚至无法实现。但是如果使用中间层来对底层数据进行包装处理，然后再返回给前端，这样就能很好解决这个问题。除此之外，如果前端需要的数据来自于不同的后端服务，或者存在鉴权等操作，那么也需要中间层来一起处理这些服务。
 
 最近了解到了node中间层的相关概念，使用node来搭建中间层对于前端开发人员来说上手较为容易。通过对业务的合理分层，能够实现更高效的开发。结构示意图如下图，前端通过fetch或者发出ajax请求向中间层请求数据，中间层调用底层服务时可以使用RPC协议，然后得到Server端返回的数据，middleware自身加工后再返回给前端。
 
@@ -18,4 +18,59 @@ RPC（Remote Procedure Call 远程过程调用），该协议允许运行于一�
 
 # Thrift
 
-Thrift是Facebook 开源的跨语言框架，是目前主流的 RPC 框架之一。它是一种接口描述语言和二进制通讯协议，能够进行服务端与服务端的通信，支持各种语言。接口定义双端遵循IDL（Interface Description Language）即可。
+Thrift是Facebook 开源的跨语言框架，是目前主流的 RPC 框架之一。它是一种接口描述语言和二进制通讯协议，能够进行服务端与服务端的通信，支持各种语言。接口定义双端遵循IDL（Interface Description Language）即可。IDL相关内容可以参考[Thrift interface description language](https://thrift.apache.org/docs/idl) 、[Thrift Types](http://thrift.apache.org/docs/types)。
+
+### 下载安装
+
+可以在[官网地址](https://thrift.apache.org/download)这里下载，参考官网[安装过程](https://thrift.apache.org/docs/BuildingFromSource)。
+
+安装过程中可能会遇到很多问题，下面列举了部分问题的参考解决办法。
+
+- 安装过程中可以配置使用的语言，不需要使用的语言可以禁掉。
+
+  ```shell
+  ./configure --without-java
+  ```
+
+- 官网的安装过程中安装目录为`/usr/local`，也可以自行设置安装位置。
+
+  ```shell
+  ./configure --with-boost=/usr/local
+  ```
+
+- Couldn't find libtoolize!     [安装libtool](https://blog.csdn.net/zhouwy_sy/article/details/52993489)
+- configure: error: Bison version 2.5 or higher must be installed on the system!  
+  -  [bison 版本问题解决方式](https://stackoverflow.com/questions/31805431/how-to-install-bison-on-mac-osx)
+  - [Mac安装thrift因bison报错的解cd 决办法 - CSDN博客](https://blog.csdn.net/cumt168/article/details/50457962)
+- 其他问题可以自行搜索解决办法
+
+### 使用
+
+#### thrift使用
+
+官网提供了[教程和示例代码](https://thrift.apache.org/tutorial/)，可以根据选择的语言查看不同的客户端和服务器端示例代码。
+
+这里给出一个简单的使用demo，客户端和服务端都使用nodejs，客户端生成一个随机数，每隔一秒发送给服务端，当发送5个的时候，输出数据并断开链接。
+
+代码仓库：[thrift使用示例代码](http://git.sankuai.com/users/chentengda/repos/thrift-tutorial/browse)。
+
+
+
+#### FE-Middleware-BE demo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

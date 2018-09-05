@@ -77,20 +77,24 @@ Item.prototype.write = function(output) {
   return;
 };
 
-var List = module.exports.List = function(args) {
+var Response = module.exports.Response = function(args) {
+  this.code = null;
   this.msg = null;
-  this.dataList = null;
+  this.data = null;
   if (args) {
+    if (args.code !== undefined && args.code !== null) {
+      this.code = args.code;
+    }
     if (args.msg !== undefined && args.msg !== null) {
       this.msg = args.msg;
     }
-    if (args.dataList !== undefined && args.dataList !== null) {
-      this.dataList = Thrift.copyList(args.dataList, [ttypes.Item]);
+    if (args.data !== undefined && args.data !== null) {
+      this.data = Thrift.copyList(args.data, [ttypes.Item]);
     }
   }
 };
-List.prototype = {};
-List.prototype.read = function(input) {
+Response.prototype = {};
+Response.prototype.read = function(input) {
   input.readStructBegin();
   while (true)
   {
@@ -104,17 +108,24 @@ List.prototype.read = function(input) {
     switch (fid)
     {
       case 1:
+      if (ftype == Thrift.Type.I16) {
+        this.code = input.readI16();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
       if (ftype == Thrift.Type.STRING) {
         this.msg = input.readString();
       } else {
         input.skip(ftype);
       }
       break;
-      case 2:
+      case 3:
       if (ftype == Thrift.Type.LIST) {
         var _size0 = 0;
         var _rtmp34;
-        this.dataList = [];
+        this.data = [];
         var _etype3 = 0;
         _rtmp34 = input.readListBegin();
         _etype3 = _rtmp34.etype;
@@ -124,7 +135,7 @@ List.prototype.read = function(input) {
           var elem6 = null;
           elem6 = new ttypes.Item();
           elem6.read(input);
-          this.dataList.push(elem6);
+          this.data.push(elem6);
         }
         input.readListEnd();
       } else {
@@ -140,21 +151,26 @@ List.prototype.read = function(input) {
   return;
 };
 
-List.prototype.write = function(output) {
-  output.writeStructBegin('List');
+Response.prototype.write = function(output) {
+  output.writeStructBegin('Response');
+  if (this.code !== null && this.code !== undefined) {
+    output.writeFieldBegin('code', Thrift.Type.I16, 1);
+    output.writeI16(this.code);
+    output.writeFieldEnd();
+  }
   if (this.msg !== null && this.msg !== undefined) {
-    output.writeFieldBegin('msg', Thrift.Type.STRING, 1);
+    output.writeFieldBegin('msg', Thrift.Type.STRING, 2);
     output.writeString(this.msg);
     output.writeFieldEnd();
   }
-  if (this.dataList !== null && this.dataList !== undefined) {
-    output.writeFieldBegin('dataList', Thrift.Type.LIST, 2);
-    output.writeListBegin(Thrift.Type.STRUCT, this.dataList.length);
-    for (var iter7 in this.dataList)
+  if (this.data !== null && this.data !== undefined) {
+    output.writeFieldBegin('data', Thrift.Type.LIST, 3);
+    output.writeListBegin(Thrift.Type.STRUCT, this.data.length);
+    for (var iter7 in this.data)
     {
-      if (this.dataList.hasOwnProperty(iter7))
+      if (this.data.hasOwnProperty(iter7))
       {
-        iter7 = this.dataList[iter7];
+        iter7 = this.data[iter7];
         iter7.write(output);
       }
     }
