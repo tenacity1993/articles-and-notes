@@ -142,7 +142,9 @@ step:
 
    安装`babel-plugin-transform-decorators`、 ` babel-plugin-transform-decorators-legacy`等相关依赖。
 
-   实际情况是，依赖装完，`.babelrc`文件中也配置了插件，webpack也配置完成之后，仍然无法识别装饰器语法，最后按照[参考](https://segmentfault.com/q/1010000010491983)中的方法2解决了。但是这种方法需要在`node_modules`中修改，个人觉得不大好，暂时先这样处理下，后续再查看下。
+   实际情况是，依赖装完，`.babelrc`文件中也配置了插件，webpack也配置完成之后，仍然无法识别装饰器语法，最后按照[参考](https://segmentfault.com/q/1010000010491983)中的方法2解决了。但是这种方法需要在`node_modules`中修改，个人觉得不大好，暂时先这样处理下，后续再查看下。具体位置如下：
+
+   ![image-20180911195011223](/var/folders/bl/mgxkhnjn1qx03zk2rrw3r96w0000gn/T/abnerworks.Typora/image-20180911195011223.png)
 
 6. 通过`npm run start`启动项目，进行后续操作。
 
@@ -367,7 +369,6 @@ actions执行状态的改变。
 
 3. 仔细了解了异步[Action这一部分](https://cn.mobx.js.org/best/actions.html)，注意书写方式。
 
-   
 
 #### 练习Demo
 
